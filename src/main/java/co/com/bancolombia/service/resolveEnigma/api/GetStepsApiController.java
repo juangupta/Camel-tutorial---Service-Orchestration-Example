@@ -5,6 +5,9 @@ import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseErrors;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseSuccess;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.FluentProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,6 +35,9 @@ public class GetStepsApiController implements GetStepsApi {
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+    
+	@EndpointInject(uri="direct:get-step-one")
+    private FluentProducerTemplate producerTemplateResolveEnigma;
 
     @org.springframework.beans.factory.annotation.Autowired
     public GetStepsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -40,17 +46,13 @@ public class GetStepsApiController implements GetStepsApi {
     }
 
     public ResponseEntity<JsonApiBodyResponseSuccess> getStepsPost(@ApiParam(value = "body" ,required=true )  @Valid @RequestBody JsonApiBodyRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<JsonApiBodyResponseSuccess>(objectMapper.readValue("{  \"data\" : [ {    \"answer\" : \"answer\",    \"header\" : {      \"id\" : \"id\",      \"type\" : \"type\"    }  }, {    \"answer\" : \"answer\",    \"header\" : {      \"id\" : \"id\",      \"type\" : \"type\"    }  } ]}", JsonApiBodyResponseSuccess.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<JsonApiBodyResponseSuccess>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+       try {
+    	   producerTemplateResolveEnigma.request(); 
+    	   return new ResponseEntity<JsonApiBodyResponseSuccess>(objectMapper.readValue("{  \"data\" : [ {    \"answer\" : \"answer\",    \"header\" : {      \"id\" : \"id\",      \"type\" : \"type\"    }  }, {    \"answer\" : \"answer\",    \"header\" : {      \"id\" : \"id\",      \"type\" : \"type\"    }  } ]}", JsonApiBodyResponseSuccess.class), HttpStatus.NOT_IMPLEMENTED);
+        } catch (IOException e) {
+            log.error("Couldn't serialize response for content type application/json", e);
+            return new ResponseEntity<JsonApiBodyResponseSuccess>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<JsonApiBodyResponseSuccess>(HttpStatus.NOT_IMPLEMENTED);
-    }
+}
 
 }
