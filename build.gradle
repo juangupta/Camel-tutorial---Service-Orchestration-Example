@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+buildscript {
+	ext {
+		springBootVersion = '1.5.13.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+group = 'co.com.bancolombia.service.resolveEnigmaApi'
+version = '1.0.0'
+
+description = "resolve-enigma-api"	
+
+
+sourceCompatibility = 1.8
+
+jar {
+	baseName = 'get-one-enigma-step-api-controller'
+	version =  '1.0'
+}
+
+repositories {
+		mavenCentral()
+}
+dependencies {
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.13.RELEASE'
+	compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.7.0'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.7.0'
+}
