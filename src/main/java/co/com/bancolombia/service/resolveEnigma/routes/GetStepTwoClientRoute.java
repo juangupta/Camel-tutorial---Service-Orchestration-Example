@@ -9,37 +9,37 @@ import org.springframework.stereotype.Component;
 import co.com.bancolombia.service.resolveEnigma.model.client.ClientJsonApiBodyResponseSuccess;
 
 @Component
-public class GetStepOneClientRoute extends RouteBuilder{
+public class GetStepTwoClientRoute extends RouteBuilder{
 
 	@Override
 	public void configure() throws Exception {
 		
-		from("direct:get-step-one")
+		from("direct:get-step-two")
 			.setHeader(Exchange.HTTP_METHOD, constant("POST"))
 	        .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-        .to("freemarker:templates/GetStepOneClientTemplate.ftl")
-        	.log("Request microservice step one ${body}")
+        .to("freemarker:templates/GetStepTwoClientTemplate.ftl")
+        	.log("Request microservice step two ${body}")
         
     	.hystrix()
 	    .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
         .to("http4://localhost:8090/EnigmaSteps/getStep")
         	.convertBodyTo(String.class)
         	.unmarshal().json(JsonLibrary.Jackson, ClientJsonApiBodyResponseSuccess.class)
-        	.log("Java Response microservice step one ${body}")
+        	.log("Java Response microservice step two ${body}")
         .process(new Processor() {
 			@Override
 			public void process(Exchange exchange) throws Exception {
-				ClientJsonApiBodyResponseSuccess stepOneResponse = (ClientJsonApiBodyResponseSuccess) exchange.getIn().getBody();
-				if (stepOneResponse.getData().get(0).getStep().equalsIgnoreCase("1")) 
+				ClientJsonApiBodyResponseSuccess stepTwoResponse = (ClientJsonApiBodyResponseSuccess) exchange.getIn().getBody();
+				if (stepTwoResponse.getData().get(0).getStep().equalsIgnoreCase("2")) 
 				{
-					exchange.setProperty("Step1", stepOneResponse.getData().get(0).getStepDescription());
+					exchange.setProperty("Step1", stepTwoResponse.getData().get(0).getStepDescription());
 					exchange.setProperty("Error", "0000");
 					exchange.setProperty("descError", "No error");
 				}
 				else 
 				{
-					exchange.setProperty("Error", "0001");
-					exchange.setProperty("descError", "Step one is not valid");
+					exchange.setProperty("Error", "0005");
+					exchange.setProperty("descError", "Step Two in invalid");
 				}				
 			}        	
         })
@@ -48,8 +48,8 @@ public class GetStepOneClientRoute extends RouteBuilder{
 	    .process(new Processor() {
 			@Override
 			public void process(Exchange exchange) throws Exception {
-				exchange.setProperty("Error", "0002");
-				exchange.setProperty("descError", "Error consulting the step one");
+				exchange.setProperty("Error", "0006");
+				exchange.setProperty("descError", "Error consulting the step Two");
 				
 			}        	
         })
