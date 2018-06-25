@@ -15,31 +15,30 @@ public class GetStepTwoClientRoute extends RouteBuilder{
 	public void configure() throws Exception {
 		
 		from("direct:get-step-two")
+		.routeId("getStepTwo")
 			.setHeader(Exchange.HTTP_METHOD, constant("POST"))
 	        .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
         .to("freemarker:templates/GetStepTwoClientTemplate.ftl")
-        	.log("Request microservice step two ${body}")
+        	//.log("Request microservice step two ${body}")
         
     	.hystrix()
 	    .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
         .to("http4://localhost:8090/EnigmaSteps/getStep")
         	.convertBodyTo(String.class)
         	.unmarshal().json(JsonLibrary.Jackson, ClientJsonApiBodyResponseSuccess.class)
-        	.log("Java Response microservice step two ${body}")
+        	//.log("Java Response microservice step two ${body}")
         .process(new Processor() {
 			@Override
 			public void process(Exchange exchange) throws Exception {
 				ClientJsonApiBodyResponseSuccess stepTwoResponse = (ClientJsonApiBodyResponseSuccess) exchange.getIn().getBody();
 				if (stepTwoResponse.getData().get(0).getStep().equalsIgnoreCase("2")) 
 				{
-					exchange.setProperty("Step1", stepTwoResponse.getData().get(0).getStepDescription());
-					exchange.setProperty("Error", "0000");
-					exchange.setProperty("descError", "No error");
+					exchange.setProperty("Step2", stepTwoResponse.getData().get(0).getStepDescription());
 				}
 				else 
 				{
 					exchange.setProperty("Error", "0005");
-					exchange.setProperty("descError", "Step Two in invalid");
+					exchange.setProperty("descError", "Step Two is not valid");
 				}				
 			}        	
         })
@@ -55,7 +54,8 @@ public class GetStepTwoClientRoute extends RouteBuilder{
         })
 	    .end()
         .log("Response code ${exchangeProperty[Error]}")
-        .log("Response description ${exchangeProperty[descError]}");	
+        .log("Response description ${exchangeProperty[descError]}")	
+        .log("Response description ${exchangeProperty[Step2]}");	
 	
 	}
 }

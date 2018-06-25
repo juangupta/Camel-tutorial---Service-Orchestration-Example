@@ -15,26 +15,25 @@ public class GetStepThreeClientRoute extends RouteBuilder{
 	public void configure() throws Exception {
 		
 		from("direct:get-step-three")
+		.routeId("getStepThree")
 			.setHeader(Exchange.HTTP_METHOD, constant("POST"))
 	        .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
         .to("freemarker:templates/GetStepThreeClientTemplate.ftl")
-        	.log("Request microservice step Three ${body}")
+        	//.log("Request microservice step Three ${body}")
         
     	.hystrix()
 	    .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
         .to("http4://localhost:8090/EnigmaSteps/getStep")
         	.convertBodyTo(String.class)
         	.unmarshal().json(JsonLibrary.Jackson, ClientJsonApiBodyResponseSuccess.class)
-        	.log("Java Response microservice step Three ${body}")
+        	//.log("Java Response microservice step Three ${body}")
         .process(new Processor() {
 			@Override
 			public void process(Exchange exchange) throws Exception {
 				ClientJsonApiBodyResponseSuccess stepThreeResponse = (ClientJsonApiBodyResponseSuccess) exchange.getIn().getBody();
 				if (stepThreeResponse.getData().get(0).getStep().equalsIgnoreCase("3")) 
 				{
-					exchange.setProperty("Step2", stepThreeResponse.getData().get(0).getStepDescription());
-					exchange.setProperty("Error", "0000");
-					exchange.setProperty("descError", "No error");
+					exchange.setProperty("Step3", stepThreeResponse.getData().get(0).getStepDescription());
 				}
 				else 
 				{
@@ -55,7 +54,8 @@ public class GetStepThreeClientRoute extends RouteBuilder{
         })
 	    .end()
         .log("Response code ${exchangeProperty[Error]}")
-        .log("Response description ${exchangeProperty[descError]}");	
+        .log("Response description ${exchangeProperty[descError]}")	
+        .log("Response description ${exchangeProperty[Step3]}");	
 	
 	}
 }
