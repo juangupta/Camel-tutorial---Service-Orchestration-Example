@@ -1,4 +1,4 @@
-package co.com.bancolombia.service.resolveEnigma.Strategy;
+package co.com.bancolombia.service.resolveEnigma.strategy;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;

@@ -6,10 +6,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
 
-import co.com.bancolombia.service.resolveEnigma.Strategy.JoinReplyAggregationStrategy;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyRequest;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseErrors;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseSuccess;
+import co.com.bancolombia.service.resolveEnigma.strategy.JoinReplyAggregationStrategy;
 
 @Component
 public class ResolveEnigmaTransactionRoute extends RouteBuilder {
