@@ -34,7 +34,7 @@ public class ResolveEnigmaTransactionRoute extends RouteBuilder {
 				}        	
 	        })
 		
-		//Invocaciones Secuenciales
+		//Invocaciones secuenciales
 		//.to("direct:get-step-one")	
 		//.to("direct:get-step-two")
 		//.to("direct:get-step-three")
@@ -52,6 +52,7 @@ public class ResolveEnigmaTransactionRoute extends RouteBuilder {
         .otherwise()
          	.to("direct:generate-response-error")            	
          .end();
+		
 		
 		from("direct:generate-response-success")
 		.to("freemarker:templates/ResolveEnigmaTransactionResponse.ftl")
