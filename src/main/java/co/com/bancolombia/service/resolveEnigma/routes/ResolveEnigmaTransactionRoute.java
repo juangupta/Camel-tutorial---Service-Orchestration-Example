@@ -6,6 +6,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
 
+import co.com.bancolombia.service.resolveEnigma.Strategy.JoinReplyAggregationStrategy;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyRequest;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseErrors;
 import co.com.bancolombia.service.resolveEnigma.model.JsonApiBodyResponseSuccess;
@@ -15,6 +16,8 @@ public class ResolveEnigmaTransactionRoute extends RouteBuilder {
 
 	@Override
 	public void configure() throws Exception {
+		JoinReplyAggregationStrategy myAggregationStrategy = new JoinReplyAggregationStrategy();
+		 
 		from("direct:resolve-enigma")
 		.routeId("resolveEnigma")
 			.log("Request body ${body}")
@@ -30,10 +33,19 @@ public class ResolveEnigmaTransactionRoute extends RouteBuilder {
 					
 				}        	
 	        })
-		.to("direct:get-step-one")	
-		.to("direct:get-step-two")
-		.to("direct:get-step-three")
 		
+		//Invocaciones Secuenciales
+		//.to("direct:get-step-one")	
+		//.to("direct:get-step-two")
+		//.to("direct:get-step-three")
+		
+		//Invocaciones paralelas
+		.multicast(myAggregationStrategy)
+        .parallelProcessing()
+        .to("direct:get-step-one", "direct:get-step-two", "direct:get-step-three")
+        .end()
+        
+        
         .choice()
     	.when(exchangeProperty("Error").isEqualTo("0000"))
     	 	.to("direct:generate-response-success")
