@@ -4,7 +4,7 @@ apply plugin: 'org.springframework.boot'
 
 buildscript {
 	ext {
-		springBootVersion = '1.5.13.RELEASE'
+		springBootVersion = '2.1.2.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -20,7 +20,7 @@ version = '1.0.0'
 description = "resolve-enigma-api"	
 
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 jar {
 	baseName = 'get-one-enigma-step-api-controller'
@@ -31,14 +31,26 @@ repositories {
 		mavenCentral()
 }
 dependencies {
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.13.RELEASE'
+	compile project(":common-valitadions")
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.1.2.RELEASE'
 	compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.7.0'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.7.0'
+	compile group: 'javax.activation', name: 'activation', version: '1.1.1' // no vienen en versione superiores de java 8
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.4.0-b180830.0359'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+	
 	compile group: 'org.apache.camel', name: 'camel-spring-boot-starter', version: '2.21.0'
 	compile group: 'org.apache.camel', name: 'camel-http4', version: '2.21.0'
 	compile group: 'org.apache.camel', name: 'camel-freemarker', version: '2.21.0'
 	compile group: 'org.apache.camel', name: 'camel-jackson', version: '2.21.0'
 	compile group: 'org.apache.camel', name: 'camel-hystrix', version: '2.21.0'
+	compile group: 'org.apache.camel', name: 'camel-csv', version: '2.21.0'
+	compile group: 'org.apache.camel', name: 'camel-xmljson', version: '2.21.0'
+	compile group: 'xom', name: 'xom', version: '1.2.5'
+	compile group: 'org.apache.camel', name: 'camel-test', version: '2.21.0'
+	
+	
+    //compile group: 'io.hawt', name: 'hawtio-springboot', version: '2.0.2'
 	
     
 }
